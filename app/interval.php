@@ -22,6 +22,10 @@ function getInput() {
 }
 
 for ($i=0; $i < 60; $i++) { 
-  echo file_get_contents(sprintf('http://%s/submit.php?$s', CONFIG['serverip'], http_build_query(getInput())));
+  echo "sending request #{$i}\n";
+  $url = sprintf('http://%s/submit.php?%s', CONFIG['serverip'], http_build_query(getInput()));
+  echo "url is {$url}\n";
+  echo file_get_contents($url);
+  echo "sleeping for 60 seconds\n";
   sleep(60);
 }

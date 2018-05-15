@@ -1,4 +1,4 @@
-<?php define('CONFIG', parse_ini_file('../app/config.ini', true));
+<?php defined('CONFIG') || define('CONFIG', parse_ini_file('../app/config.ini', true));
 
 
 function createGraph($filename, $dataItem, $start, $trend, $label, $title, $autoscale, $lower = 0, $upper = 0) {
