@@ -65,9 +65,9 @@ try {
     ];
 
     generateSeries($graphs, '1d');
-    generateSeries($graphs, '10days');
-    generateSeries($graphs, '3months');
-    generateSeries($graphs, '12months');
+    // generateSeries($graphs, '10days');
+    // generateSeries($graphs, '3months');
+    // generateSeries($graphs, '12months');
   }
   $updator->update($fields, $_SERVER['REQUEST_TIME']);
 } catch (Exception $e) {
