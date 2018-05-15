@@ -8,8 +8,9 @@ if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit();
 
 $status = "!ok\n";
 
-$_GET['p'] = $_GET['p'] * CONFIG['coefficients']['pascal_conversion'] + CONFIG['coefficients']['barometric_correction'];
-$_GET['l'] = $_GET['l'] / CONFIG['coefficients']['light_sensor_factor'] * 100;
+$_GET['p']  = $_GET['p'] * CONFIG['coefficients']['pascal_conversion'] + CONFIG['coefficients']['barometric_correction'];
+$_GET['l']  = $_GET['l'] / CONFIG['coefficients']['light_sensor_factor'] * 100;
+$_GET['wd'] = $_GET['wd'] * CONFIG['coefficients']['positition_to_degree'];
 
 $data = array_map(function($map) {
   return (float) $_GET[$map];
@@ -18,8 +19,8 @@ $data = array_map(function($map) {
   'winddir'            => 'wd',
   'windgustmph'        => 'gs',
   'windgustdir'        => 'gd',
-  'windspeedmph_avg2m' => 'ws2',
-  'winddir_avg2m'      => 'wd2',
+  'windspeedmph'       => 'ws2',
+  'winddir'            => 'wd2',
   'windgustmph_10m'    => 'gs10',
   'windgustdir_10m'    => 'gd10',
   'humidity'           => 'h',
@@ -49,25 +50,13 @@ if ($data['humidity'] > 105 || $data['humidity'] < 0) {
 
 try {
   $updator = new RRDUpdater(CONFIG['database']);
-  $updator->update([
-    'windspeedmph' => $data['windspeedmph_avg2m'],
-    'winddir'      => $data['winddir_avg2m'] * 22.5,
-    'tempf'        => $data['tempf'],
-    'rainin'       => $data['rainin'],
-    'pressure'     => $data['pressure'],
-    'humidity'     => $data['humidity'],
-    ], $_SERVER['REQUEST_TIME']);
+  // not all fields are saved to the data RRD database, intersect those from db creation
+  $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
+  $updator->update($fields, $_SERVER['REQUEST_TIME']);
 } catch (Exception $e) {
   echo "ERROR: {$e->getMessage()}\n";
   print_r($e);
 }
 
-
-// todo - create a perpetual log file of weather, probably as xml for query-ability.
-
+// TODO - create a perpetual log file of weather, probably xml for queries.
 echo $status;
-
-
-
-        
-        
