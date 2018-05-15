@@ -1,5 +1,6 @@
 <?php
 
+// this is just to simulate what pinging the server would look like over an hour
 function getInput() {
   return [
     'ws'   => rand(5, 50),

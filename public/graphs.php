@@ -1,20 +1,16 @@
-<?php
+<?php define('CONFIG', parse_ini_file('../app/config.ini', true));
 
-define('CONFIG', parse_ini_file('../app/config.ini', true));
 
-function createAutoGraph($filename, $dataItem, $label, $title, $start, $lower, $upper, $trend, $autoscale = true) {
+function createGraph($filename, $dataItem, $start, $trend, $label, $title, $autoscale, $lower = 0, $upper = 0) {
   $graphObj = new RRDGraph("../data/charts/{$filename}.png");
 
-  $options = [
-    "--start" => $start, // --start
-    "--end" => 'now',  // --end
-    '--width' => CONFIG['chart']['width'],
-    '--height' => CONFIG['chart']['height'],
+  $options = array_merge(CONFIG['chart']['params'], [
+    "--start"          => $start,
     '--vertical-label' => $label,
-    '--title' => $title,
+    '--title'          => $title,
     '--alt-y-grid',
-    
-  ];
+  ]);
+  
   
   if ($lower < $upper) {
     $options['-l'] = $lower;
@@ -50,14 +46,11 @@ function createAutoGraph($filename, $dataItem, $label, $title, $start, $lower, $
       $options[] = 'CDEF:swdir=wDir,202.5,GT,wDir,247.5,LT,*,wMaxScaled,0,IF';
       $options[] = 'CDEF:wdir=wDir,247.5,GE,wDir,292.5,LE,*,wMaxScaled,0,IF';
       $options[] = 'CDEF:nwdir=wDir,292.5,GT,wDir,337.5,LT,*,wMaxScaled,0,IF';
-      $options[] = 'AREA:ndir#0000FF:N';    # Blue
-      $options[] = 'AREA:nedir#1E90FF:NE';  # DodgerBlue
-      $options[] = 'AREA:edir#00FFFF:E';    # Cyan
-      $options[] = 'AREA:sedir#00FF00:SE';  # Lime
-      $options[] = 'AREA:sdir#FFFF00:S';    # Yellow
-      $options[] = 'AREA:swdir#FF8C00:SW';  # DarkOrange
-      $options[] = 'AREA:wdir#FF0000:W';    # Red
-      $options[] = 'AREA:nwdir#FF00FF:NW';  # Magenta
+      
+      array_push($options, ...array_map(function($ord, $hex) {
+        return sprintf('AREA:%sdir%s:%s', strtolower($ord), $hex, $ord);
+      }, array_keys(CONFIG['chart']['o_color']), CONFIG['chart']['o_color']));
+
    }
   
   $graphObj->setOptions($options);
@@ -65,39 +58,21 @@ function createAutoGraph($filename, $dataItem, $label, $title, $start, $lower, $
 }
 
 
-
-
-function generateDayGraphs() {
-    createAutoGraph('1d_windspeedmph', 'windspeedmph', 'miles per hour', 'Sustained Wind', 'now-1d', 0, 0, 0);
-    createAutoGraph('1d_tempf', 'tempf', 'degrees Fahrenheit', 'Temperature', 'now-1d', 0, 0, 0);
-    createAutoGraph('1d_pressure', 'pressure', 'inches Hg', 'Barometric Pressure', 'now-1d', 0, 0, 0);
-    createAutoGraph('1d_humidity', 'humidity', 'percent', 'Relative Humidity', 'now-1d', 0, 0, 0);
-    createAutoGraph('1d_rainin', 'rainin', 'inches', 'Rain Fall', 'now-1d', 0, 0, 0, false);
+function generateSeries($graphs, $length = '1d') {
+  foreach ($graphs as $type => $params) {
+    createGraph("{$length}_{$type}", $type, "end-$length", 0, ...$params);
+  }
 }
 
-function generateLongGraphs() {
+$graphs = [
+  'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
+  'tempf'        => ['Degrees Farenheit', 'Temperature', true],
+  'pressure'     => ['inches Hg', 'Barometric Pressure', true],
+  'humidity'     => ['Percent', 'Relative Humidity', true],
+  'rainin'       => ['Inches', 'Rain Fall', false],
+];
 
-    # 10 day long graphs
-    createAutoGraph('10d_windspeedmph', 'windspeedmph', 'miles per hour', 'Sustained Wind', 'end-10days', 0, 0, 0);
-    createAutoGraph('10d_tempf', 'tempf', 'degrees Fahrenheit', 'Temperature', 'end-10days',0, 0, 0);
-    createAutoGraph('10d_pressure', 'pressure', 'inches Hg', 'Barometric Pressure', 'end-10days',0, 0, 0);
-    createAutoGraph('10d_humidity', 'humidity', 'percent', 'Relative Humidity', 'end-10days', 0, 0, 0);
-    createAutoGraph('10d_rainin', 'rainin', 'inches', 'Rain Fall', 'end-10days', 0, 0, 0, false);
-
-    # 3 month long graphs
-    createAutoGraph('3m_windspeedmph', 'windspeedmph', 'miles per hour', 'Sustained Wind', 'end-3months', 0, 0, 2);
-    createAutoGraph('3m_tempf', 'tempf', 'degrees Fahrenheit', 'Temperature', 'end-3months',0, 0, 2);
-    createAutoGraph('3m_pressure', 'pressure', 'inches Hg', 'Barometric Pressure', 'end-3months', 0, 0, 2);
-    createAutoGraph('3m_humidity', 'humidity', 'percent', 'Relative Humidity', 'end-3months', 0, 0, 2);
-    createAutoGraph('3m_rainin', 'rainin', 'inches', 'Rain Fall', 'end-3months', 0, 0, 0, false);
-
-    # 12 month long graphs
-    createAutoGraph('12m_windspeedmph', 'windspeedmph', 'miles per hour', 'Sustained Wind', 'end-12months', 0, 0, 1);
-    createAutoGraph('12m_tempf', 'tempf', 'degrees Fahrenheit', 'Temperature', 'end-12months', 0, 0, 1);
-    createAutoGraph('12m_pressure', 'pressure', 'inches Hg', 'Barometric Pressure', 'end-12months', 0, 0, 1);
-    createAutoGraph('12m_humidity', 'humidity', 'percent', 'Relative Humidity', 'end-12months', 0, 0, 1);
-    createAutoGraph('12m_rainin', 'rainin', 'inches', 'Rain Fall', 'end-12months', 0, 0, 0);
-}
-
-generateDayGraphs();
-generateLongGraphs();
+generateSeries($graphs, '1d');
+generateSeries($graphs, '10days');
+generateSeries($graphs, '3months');
+generateSeries($graphs, '12months');
