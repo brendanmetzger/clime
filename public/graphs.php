@@ -1,6 +1,6 @@
 <?php
 
-define('CONFIG', parse_ini_file('../bin/config.ini', true));
+define('CONFIG', parse_ini_file('../app/config.ini', true));
 
 function createAutoGraph($filename, $dataItem, $label, $title, $start, $lower, $upper, $trend, $autoscale = true) {
   $graphObj = new RRDGraph("../data/charts/{$filename}.png");

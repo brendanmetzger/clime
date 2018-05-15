@@ -1,4 +1,4 @@
-<?php define('CONFIG', parse_ini_file('../bin/config.ini', true));
+<?php define('CONFIG', parse_ini_file('../app/config.ini', true));
 
 // Local networks only
 if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit();
@@ -30,7 +30,6 @@ $data = array_map(function($map) {
   'batt_lvl'           => 'b',
   'light_lvl'          => 'l',
 ]);
-
 
 // check for reboots
 
