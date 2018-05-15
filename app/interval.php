@@ -4,13 +4,13 @@
 function getInput() {
   return [
     'ws'   => rand(5, 50),
-    'wd'   => rand(0, 15),
+    'wd'   => round(date('i') / 60 * 15),
     'ws2'  => rand(5, 10),
-    'wd2'  => rand(0, 15),
+    'wd2'  => round(date('i') / 60 * 15),
     'gs'   => rand(30, 40),
-    'gd'   => rand(0, 360),
+    'gd'   => round(date('i') / 60 * 15),
     'gs10' => rand(10, 50),
-    'gd10' => rand(0, 15),
+    'gd10' => round(date('i') / 60 * 15),
     'h'    => rand(50, 80),
     't'    => rand(20, 100),
     'p'    => rand(20, 30),
