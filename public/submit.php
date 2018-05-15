@@ -12,7 +12,7 @@ $_GET['p'] = $_GET['p'] * CONFIG['coefficients']['pascal_conversion'] + CONFIG['
 $_GET['l'] = $_GET['l'] / CONFIG['coefficients']['light_sensor_factor'] * 100;
 
 $data = array_map(function($map) {
-  return $_GET[$map];
+  return (float) $_GET[$map];
 }, [
   'windspeedmph'       => 'ws',
   'winddir'            => 'wd',
@@ -50,12 +50,12 @@ if ($data['humidity'] > 105 || $data['humidity'] < 0) {
 try {
   $updator = new RRDUpdater(CONFIG['database']);
   $updator->update([
-    'windspeedmph' => (float) $data['windspeedmph_avg2m'],
-    'winddir'      => (float) $data['winddir_avg2m'] * 22.5,
-    'tempf'        => (float) $data['tempf'],
-    'rainin'       => (float) $data['rainin'],
-    'pressure'     => (float) $data['pressure'],
-    'humidity'     => (float) $data['humidity'],
+    'windspeedmph' => $data['windspeedmph_avg2m'],
+    'winddir'      => $data['winddir_avg2m'] * 22.5,
+    'tempf'        => $data['tempf'],
+    'rainin'       => $data['rainin'],
+    'pressure'     => $data['pressure'],
+    'humidity'     => $data['humidity'],
     ], $_SERVER['REQUEST_TIME']);
 } catch (Exception $e) {
   echo "ERROR: {$e->getMessage()}\n";
