@@ -3,7 +3,9 @@
 // Local networks only
 if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit();
 
-// sample request = http://weather.local/submit.php?ws=10.0&wd=270&ws2=7.0&wd2=270&gs=25.0&gd=180&gs10=12.0&gd10=270&h=51.0&t=76.8&p=101269.3&r=1.00&dr=5.00&b=4.3&l=2.4
+require_once '../app/graph.php';
+
+// sample request = http://HOST/submit.php?ws=10.0&wd=270&ws2=7.0&wd2=270&gs=25.0&gd=180&gs10=12.0&gd10=270&h=51.0&t=76.8&p=101269.3&r=1.00&dr=5.00&b=4.3&l=2.4
 
 
 $status = "!ok\n";
@@ -52,6 +54,21 @@ try {
   $updator = new RRDUpdater(CONFIG['database']);
   // not all fields are saved to the data RRD database, intersect those from db creation
   $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
+  if (condition) {
+    // TODO make this run less...
+    $graphs = [
+      'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
+      'tempf'        => ['Degrees Farenheit', 'Temperature', true],
+      'pressure'     => ['inches Hg', 'Barometric Pressure', true],
+      'humidity'     => ['Percent', 'Relative Humidity', true],
+      'rainin'       => ['Inches', 'Rain Fall', false],
+    ];
+
+    generateSeries($graphs, '1d');
+    generateSeries($graphs, '10days');
+    generateSeries($graphs, '3months');
+    generateSeries($graphs, '12months');
+  }
   $updator->update($fields, $_SERVER['REQUEST_TIME']);
 } catch (Exception $e) {
   echo "ERROR: {$e->getMessage()}\n";

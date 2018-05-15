@@ -2,7 +2,7 @@
 
 
 function createGraph($filename, $dataItem, $start, $trend, $label, $title, $autoscale, $lower = 0, $upper = 0) {
-  $graphObj = new RRDGraph("../data/charts/{$filename}.png");
+  $graphObj = new RRDGraph("charts/{$filename}.png");
 
   $options = array_merge(CONFIG['chart']['params'], [
     "--start"          => $start,
@@ -63,16 +63,3 @@ function generateSeries($graphs, $length = '1d') {
     createGraph("{$length}_{$type}", $type, "end-$length", 0, ...$params);
   }
 }
-
-$graphs = [
-  'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
-  'tempf'        => ['Degrees Farenheit', 'Temperature', true],
-  'pressure'     => ['inches Hg', 'Barometric Pressure', true],
-  'humidity'     => ['Percent', 'Relative Humidity', true],
-  'rainin'       => ['Inches', 'Rain Fall', false],
-];
-
-generateSeries($graphs, '1d');
-generateSeries($graphs, '10days');
-generateSeries($graphs, '3months');
-generateSeries($graphs, '12months');

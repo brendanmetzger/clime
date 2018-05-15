@@ -44,6 +44,9 @@
       }
       body { padding: 5vw;}
       h1, h2 { font-weight: 100;}
+      img {
+        max-width: 100%;
+      }
       /* ]]> */
     </style>
   </head>
@@ -51,6 +54,9 @@
     <header>
       <h1>Weather</h1>
     </header> 
-    <p>interface soon</p>
+    <p>more interface soon</p>
+    <?php foreach (glob('charts/*.png') as $path): ?>
+      <img src="<?php echo $path ?>"/>      
+    <?php endforeach ?>
   </body>
 </html>
