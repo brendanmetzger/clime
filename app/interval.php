@@ -27,5 +27,5 @@ for ($i=0; $i < 120; $i++) {
   echo "url is {$url}\n";
   echo file_get_contents($url);
   echo "sleeping for 60 seconds\n";
-  sleep(5);
+  sleep(60);
 }

@@ -54,7 +54,7 @@ try {
   // not all fields are saved to the data RRD database, intersect fields avail in db
   $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
   if (condition) {
-    // TODO make this run less...
+
     $graphs = [
       'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
       'tempf'        => ['Degrees Farenheit', 'Temperature', true],
@@ -63,7 +63,7 @@ try {
       'rainin'       => ['Inches', 'Rain Fall', false],
     ];
     
-    generateSeries($graphs, '1hour');
+    generateSeries($graphs, '1d');
     // generateSeries($graphs, '10days');
     // generateSeries($graphs, '3months');
     // generateSeries($graphs, '12months');
