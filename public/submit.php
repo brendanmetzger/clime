@@ -1,8 +1,10 @@
 <?php define('CONFIG', parse_ini_file('../app/config.ini', true));
 
+$status = "!ok\n";
 
 // Local networks only
 if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit();
+
 
 require_once '../app/graph.php';
 
@@ -11,7 +13,6 @@ require_once '../app/graph.php';
 $_GET['p']  = rpn(sprintf(CONFIG['formula']['pressure'], $_GET['p']));
 $_GET['l']  = rpn(sprintf(CONFIG['formula']['light'], $_GET['l']));
 $_GET['wd'] = rpn(sprintf(CONFIG['formula']['degrees'], $_GET['wd']));
-
 
 $data = array_map(function($map) {
   return (float) $_GET[$map];

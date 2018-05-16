@@ -1,18 +1,17 @@
 <?php defined('CONFIG') || define('CONFIG', parse_ini_file('../app/config.ini', true));
 
 // simple rpn arithmatic evaluations
-function rpn($expression, $stack = []){
-  $operator = [
-    '+' => function($a, $b) { return $a + $b;  },
-    '-' => function($a, $b) { return $a - $b;  },
-    '*' => function($a, $b) { return $a * $b;  },
-    '^' => function($a, $b) { return $a ** $b; },
-  ];
+function rpn($expression, $stack = [], $op = []) {
+  $op['+'] = function($a, $b) { return $a  + $b; };
+  $op['*'] = function($a, $b) { return $a  * $b; };
+  $op['^'] = function($a, $b) { return $a ** $b; };
+  $op['-'] = function($a, $b) { return $a  - $b; };
+  $op['/'] = function($a, $b) { return $a  / $b; };
   
-  foreach (preg_split("/[^-+*^.0-9]+/", trim($expression)) as $token) {
-    if (is_numeric($token)) $stack[] = $token;
-    else $stack[] = $operator[$token](...array_slice($stack, -2));
+  foreach (preg_split("/[^-+*\/^.0-9]+/", trim($expression)) as $token) {
+    $stack[] = is_numeric($token) ? $token : $op[$token](...array_slice($stack, -2));
   }
+
   return end($stack);
 }
 
@@ -49,24 +48,31 @@ function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale
 
   # if wind plot show color coded wind direction
   if ($key == 'windspeedmph') {
-    // Reverse Polish Notation
+    $points = array_keys(CONFIG['chart']['o_color']);
+    
     $options[] = sprintf('DEF:wDir=%s:winddir:AVERAGE', CONFIG['database']);
     $options[] = 'VDEF:wMax=dSeries,MAXIMUM';
     $options[] = 'CDEF:wMaxScaled=dSeries,0,*,wMax,+,-0.15,*';
-    $options[] = 'CDEF:ndir=wDir,337.5,GE,wDir,22.5,LE,+,wMaxScaled,0,IF';
-    $options[] = 'CDEF:nedir=wDir,22.5,GT,wDir,67.5,LT,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:edir=wDir,67.5,GE,wDir,112.5,LE,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:sedir=wDir,112.5,GT,wDir,157.5,LT,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:sdir=wDir,157.5,GE,wDir,202.5,LE,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:swdir=wDir,202.5,GT,wDir,247.5,LT,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:wdir=wDir,247.5,GE,wDir,292.5,LE,*,wMaxScaled,0,IF';
-    $options[] = 'CDEF:nwdir=wDir,292.5,GT,wDir,337.5,LT,*,wMaxScaled,0,IF';
+    for ($s = 45, $i=$s/2; $i < 360; $i+=$s) {
+      // Reverse Polish Notation
+      // A,B,C,IF should be read as if (A) then (B) else (C)
+      // n q GE should be read as n > q ? 1 : 0
+      $options[] = sprintf('CDEF:%sdir=wDir,%s,GE,wDir,%s,LT,*,wMaxScaled,0,IF', $points[floor($i/$s)], fmod($i - $s + 360, 360), $i);
+    }
+    
+    // $options[] = 'CDEF:ndir=wDir,337.5,GE,wDir,22.5,LE,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:nedir=wDir,22.5,GT,wDir,67.5,LT,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:edir=wDir,67.5,GE,wDir,112.5,LE,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:sedir=wDir,112.5,GT,wDir,157.5,LT,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:sdir=wDir,157.5,GE,wDir,202.5,LE,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:swdir=wDir,202.5,GT,wDir,247.5,LT,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:wdir=wDir,247.5,GE,wDir,292.5,LE,*,wMaxScaled,0,IF';
+    // $options[] = 'CDEF:nwdir=wDir,292.5,GT,wDir,337.5,LT,*,wMaxScaled,0,IF';
+    
     
     array_push($options, ...array_map(function($ord, $hex) {
-      // AREA:value[#color[#color2]][:[legend][:STACK][:skipscale][:gradheight=y]
-      // AREA:ndir#000000:N
-      return sprintf('AREA:%sdir%s:%s', strtolower($ord), $hex, $ord);
-    }, array_keys(CONFIG['chart']['o_color']), CONFIG['chart']['o_color']));
+      return sprintf('AREA:%sdir%s:%s', $ord, $hex, strtoupper($ord));
+    }, $points , CONFIG['chart']['o_color']));
 
    }
   
