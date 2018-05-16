@@ -1,6 +1,6 @@
 <?php define('CONFIG', parse_ini_file('config.ini', true));
 
-// this is just to simulate what pinging the server would look like over an hour
+// this is just to simulate what pinging the server would look like over a few hours
 function getInput() {
   return [
     'ws'   => rand(5, 50),
@@ -23,7 +23,7 @@ function getInput() {
 
 for ($i=0; $i < 120; $i++) { 
   echo "sending request #{$i}\n";
-  $url = sprintf('http://%s/submit.php?%s', 'weather.local', http_build_query(getInput()));
+  $url = sprintf('http://%s/submit.php?%s', CONFIG['serverip'], http_build_query(getInput()));
   echo "url is {$url}\n";
   echo file_get_contents($url);
   echo "sleeping for 60 seconds\n";
