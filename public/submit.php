@@ -53,8 +53,8 @@ try {
   $updator = new RRDUpdater(CONFIG['database']);
   // not all fields are saved to the data RRD database, intersect fields avail in db
   $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
-  if (condition) {
-
+  if (true) {
+    // TODO make this run less...
     $graphs = [
       'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
       'tempf'        => ['Degrees Farenheit', 'Temperature', true],
