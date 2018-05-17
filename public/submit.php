@@ -6,9 +6,6 @@ if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit(); /
 
 require_once '../app/graph.php';
 
-$status = "!ok\n";
-
-
 // TODO: map these in config, no need to assign twice
 $_GET['p']  = rpn(sprintf(CONFIG['formula']['pressure'], $_GET['p']));
 $_GET['l']  = rpn(sprintf(CONFIG['formula']['light'], $_GET['l']));
@@ -50,7 +47,6 @@ if ($data['humidity'] > 105 || $data['humidity'] < 0) {
 try {
   $rrDB   = new RRDUpdater(CONFIG['database']);
   $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
-  
   $graphs = [
     'windspeedmph' => ['Miles per Hour', 'Sustained Wind', true],
     'tempf'        => ['Degrees Farenheit', 'Temperature', true],
@@ -58,15 +54,16 @@ try {
     'humidity'     => ['Percent', 'Relative Humidity', true],
     'rainin'       => ['Inches', 'Rain Fall', false],
   ];
-  
+
   generateSeries($graphs, '1d'); // can also things like '10days', '3months', '12months'
-  
+
   $rrDB->update($fields, $_SERVER['REQUEST_TIME']);
-  
+
 } catch (Exception $e) {
-  echo "ERROR: {$e->getMessage()}\n";
-  print_r($e);
+
+  $status = "ERROR: {$e->getMessage()}\n";
+
 }
 
 // TODO - create a perpetual log file of weather... fputscsv($handle, $data);
-echo $status;
+echo $status ?? "!ok\n";
