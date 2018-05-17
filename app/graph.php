@@ -9,7 +9,7 @@ function rpn($expression, $stack = [], $op = []) {
   $op['/'] = function($a, $b) { return $a  / $b; };
   
   foreach (preg_split("/[^-+*\/^.0-9]+/", trim($expression)) as $token) {
-    $stack[] = is_numeric($token) ? $token : $op[$token](...array_slice($stack, -2));
+    $stack[] = is_numeric($token) ? $token : $op[$token](...array_splice($stack, -2));
   }
 
   return end($stack);
