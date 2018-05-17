@@ -33,6 +33,8 @@ function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale
   }
   
   # Show the data, or a moving average trend line, or both.
+  $hex = '#f768a1';
+   
   $options[] = sprintf('DEF:dSeries=%s:%s:AVERAGE', CONFIG['database'], $key);
   
   if ($trend == 0) {
@@ -50,20 +52,20 @@ function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale
   // A,B,C,IF should be read as if (A) then (B) else (C); n q GE should be read as n >= q ? 1 : 0
   if ($key == 'windspeedmph') {
     $ord = array_keys(CONFIG['chart']['o_color']);
-    
+
     $options[] = sprintf('DEF:wDir=%s:winddir:AVERAGE', CONFIG['database']);
     $options[] = 'VDEF:wMax=dSeries,MAXIMUM';
     $options[] = 'CDEF:wMaxScaled=dSeries,0,*,wMax,+,-0.15,*';
-    
+
     for ($s = 45, $i=$s/2; $i < 360; $i+=$s) {
       $options[] = sprintf('CDEF:%sdir=wDir,%s,GE,wDir,%s,LT,*,wMaxScaled,0,IF', $ord[floor($i/$s)], fmod($i - $s + 360, 360), $i);
     }
-    
+
     array_push($options, ...array_map(function($ord, $hex) {
       return sprintf('AREA:%sdir%s:%s', $ord, $hex, strtoupper($ord));
     }, $ord , CONFIG['chart']['o_color']));
   }
-  
+
   $graphObj->setOptions($options);
   $graphObj->save();
 }
