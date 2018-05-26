@@ -9,9 +9,9 @@ function rpn($expression, $stack = [], $op = []) {
   $op['/'] = function($a, $b) { return $a  / $b; };
   
   foreach (preg_split("/[^-+*\/^.0-9]+/", trim($expression)) as $token) {
-    $stack[] = is_numeric($token) ? $token : $op[$token](...array_splice($stack, -2));
+    $stack[] = is_numeric($token) ? $token : $op[$token](...array_slice($stack, -2));
   }
-
+  
   return end($stack);
 }
 
@@ -32,20 +32,20 @@ function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale
     $options[] = '-A';
   }
   
-  // declaration of the RRD variable
-  $plot  = 'weather_plot';
-  $color = '#f768a1';
+  # Show the data, or a moving average trend line, or both.
+  $hex = '#f768a1';
+   
+  $options[] = sprintf('DEF:dSeries=%s:%s:AVERAGE', CONFIG['database'], $key);
   
-  $options[] = sprintf('DEF:%s=%s:%s:AVERAGE', $plot, CONFIG['database'], $key);
-    
-  if ($trend > 0) {
-    $options[] = sprintf('CDEF:smoothed=%s,86400,TREND', $plot);
-    $options[] = sprintf('LINE2:%s%s', 'smoothed', $color);
-    if ($trend > 1) {
-      $options[] = sprintf('LINE1:%s%s', $plot, $color);
-    }
-  } else {
-    $options[] = sprintf('LINE2:%s%s', $plot, $color);
+  if ($trend == 0) {
+    $options[] = 'LINE2:dSeries#0400ff';
+  } elseif ($trend == 1) {
+    $options[] = 'CDEF:smoothed=dSeries,86400,TREND';
+    $options[] = 'LINE2:smoothed#0400ff';
+  } elseif ($trend == 2) {
+    $options[] = 'LINE1:dSeries#0400ff';
+    $options[] = 'CDEF:smoothed=dSeries,86400,TREND';
+    $options[] = 'LINE2:smoothed#0400ff';
   }
 
   // Reverse Polish Notation
@@ -71,7 +71,6 @@ function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale
 }
 
 
-// TODO would rather times be offset in seconds
 function generateSeries($graphs, $length = '1d') {
   foreach ($graphs as $type => $params) {
     createGraph("{$length}_{$type}", $type, "end-$length", 0, ...$params);
