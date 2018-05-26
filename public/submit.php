@@ -44,6 +44,10 @@ if ($data['humidity'] > 105 || $data['humidity'] < 0) {
   $status = "!r\n"; // invalid humidity
 }
 
+if (date('Gi') === '000') { // reset at midnight
+  $status = "!r\n";
+}
+
 try {
   $rrDB   = new RRDUpdater(CONFIG['database']);
   $fields = array_intersect_key($data, array_flip(CONFIG['chart']['fields']));
@@ -60,8 +64,8 @@ try {
   $rrDB->update($fields, $_SERVER['REQUEST_TIME']);
   
   $day = date('yW'); 
-  $fp  = fopen("charts/{$day}.csv", 'a');
-  $data['timestamp'] = time();
+  $fp  = fopen("charts/{$day}.txt", 'a');
+  $data['timestamp'] = date('Gi');
   fputcsv($fp, $data);
 
 } catch (Exception $e) {
