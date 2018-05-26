@@ -58,6 +58,11 @@ try {
   generateSeries($graphs, '1d'); // can also things like '10days', '3months', '12months'
 
   $rrDB->update($fields, $_SERVER['REQUEST_TIME']);
+  
+  $day = date('yW'); 
+  $fp  = fopen("charts/{$day}.csv", 'a');
+  $data['timestamp'] = time();
+  fputcsv($fp, $data);
 
 } catch (Exception $e) {
 
