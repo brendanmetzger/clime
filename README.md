@@ -5,9 +5,33 @@ A work in progress, originally forked from [Do-it-yourself Weather Station](http
 ## Requirements
 
 - PHP 7.1 +
-- install rrdtool on (homebrew on OS X, apt-get on ubuntu)
-- install [PHP rrd extension](http://php.net/manual/en/book.rrd.php) (PECL on OSX,  `apt-get install php-rrd` on ubuntu)
+- install rrdtool on (homebrew on OS X, apt-get on ubuntu '`sudo apt-get install librrds-perl rrdtool`)
+- install [PHP rrd extension](http://php.net/manual/en/book.rrd.php) (PECL on OSX,  `sudo apt-get install php-rrd` on ubuntu)
 - This is using apache
+
+### Ubuntu setup
+
+Flash [ubuntu server](https://ubuntu.com/download/iot/raspberry-pi-2-3), to microSD using with [Etcher](https://www.balena.io/etcher/). Setup the Raspberry Pi and plug in SD card and connect it to power and an ethernet cable directly to router. Check the router's config page for the Pi's IP address after connecting.
+
+Login to ubuntu replacing x.x.x.x with actual ip: `ssh ubuntu@x.x.x.x`—the default password is ubuntu—this must be changed on first login.
+
+### Server setup
+
+This is what I start almost all servers with in terms of apache config and php setup. The project does not immediately need rewrites, gd, curl, xml out of the box, but most projects eventually do want those features. I install git as a quick way to manage updates and deployments.
+
+- `sudo apt-get update`
+- `sudo apt-get install apache2`
+- `sudo apt-get install php`
+- `sudo apt-get install libapache2-mod-php`
+- `sudo apt-get install php-xml`
+- `sudo apt-get install curl`
+- `sudo apt-get install php-curl`
+- `sudo apt-get install php-gd`
+- `sudo a2enmod rewrite`
+- `sudo apachectl -k start` (if not running)
+- `sudo apt-get install git`
+
+
 
 
 

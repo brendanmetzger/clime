@@ -37,15 +37,15 @@ if ($data['pressure'] < 25.0 || $data['pressure'] > 35.0) {
 }
 
 if ($data['tempf'] < -100) {
-  $status = "!r\n"; // invalid temperature
+  $status = "!r\r\n"; // invalid temperature
 }
 
 if ($data['humidity'] > 105 || $data['humidity'] < 0) {
-  $status = "!r\n"; // invalid humidity
+  $status = "!r\r\n"; // invalid humidity
 }
 
 if (date('Gis') === '000') { // reset at midnight
-  $status = "!r\n";
+  $status = "!r\r\n";
 }
 
 try {
@@ -65,7 +65,7 @@ try {
   
   $week = date('yW'); 
   $fp  = fopen("charts/{$week}.txt", 'a');
-  $data['timestamp'] = date('w-Gis');
+  $data['timestamp'] = (date('G') * 60) + date('i');
   fputcsv($fp, $data);
 
 } catch (Exception $e) {
@@ -75,4 +75,4 @@ try {
 }
 
 // TODO - create a perpetual log file of weather... fputscsv($handle, $data);
-echo $status ?? "!ok\n";
+echo $status ?? "!ok\r\n";

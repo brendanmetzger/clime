@@ -28,6 +28,6 @@ for ($i=0; $i < 120; $i++) {
   $url = sprintf('http://%s/submit.php?%s', CONFIG['serverip'], http_build_query(getInput()));
   echo "url is {$url}\n";
   echo file_get_contents($url);
-  echo "sleeping for 60 seconds\n";
-  sleep(60);
+  echo "sleeping for 10 seconds\n";
+  sleep(10);
 }
