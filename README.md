@@ -5,9 +5,11 @@ A work in progress, originally forked from [Do-it-yourself Weather Station](http
 ## Requirements
 
 - PHP 7.1 +
+- Apache
+- Ubuntu (for this example anyway)
 - install rrdtool on (homebrew on OS X, apt-get on ubuntu '`sudo apt-get install librrds-perl rrdtool`)
 - install [PHP rrd extension](http://php.net/manual/en/book.rrd.php) (PECL on OSX,  `sudo apt-get install php-rrd` on ubuntu)
-- This is using apache
+
 
 ### Ubuntu setup
 
@@ -31,6 +33,18 @@ This is what I start almost all servers with in terms of apache config and php s
 - `sudo apachectl -k start` (if not running)
 - `sudo apt-get install git`
 
+### Configs
+
+In php.ini, set the `date.timezone`,  `date.default_latitude` and `date.default_longitude`
+
+
+### App Setup
+
+Clone the [clime repository](https://github.com/brendanmetzger/clime), then point the DocumentRoot to `/var/www/**repo root**/public`. The `.conf` will be somewhere in `/etc/apache2/sites-enabled`, for reference. 
+
+In your repo root,  `mkdir data` (or whatever you want—set that in config.ini) and set the owner to `sudo chown www-data data` (that's specific to ubuntu, it's `_www` on Mac OSX). Make another directory in your document root  (public by default), `mkdir public/charts` , and set the owner to `sudo chown www-data public/charts` as well.
+
+---------
 
 
 
