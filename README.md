@@ -29,20 +29,37 @@ This is what I start almost all servers with in terms of apache config and php s
 - `sudo apt-get install curl`
 - `sudo apt-get install php-curl`
 - `sudo apt-get install php-gd`
-- `sudo a2enmod rewrite`
 - `sudo apachectl -k start` (if not running)
 - `sudo apt-get install git`
+
+Make sure to set the timezone on your Ubuntu install—Google how if necessary.
 
 ### Configs
 
 In php.ini, set the `date.timezone`,  `date.default_latitude` and `date.default_longitude`
 
+In the `/etc/apache2/sites-enabled/000-default.conf` file, make sure you have something like the following:
+
+```
+  DocumentRoot "/var/www/weather/public"
+  ServerName weather.local
+
+  <Directory "/var/www/weather/public">
+    Require all granted
+    Options +FollowSymLinks
+    AllowOverride none
+    Order deny,allow
+    Allow from all
+  </Directory>
+```
 
 ### App Setup
 
 Clone the [clime repository](https://github.com/brendanmetzger/clime), then point the DocumentRoot to `/var/www/**repo root**/public`. The `.conf` will be somewhere in `/etc/apache2/sites-enabled`, for reference. 
 
 In your repo root,  `mkdir data` (or whatever you want—set that in config.ini) and set the owner to `sudo chown www-data data` (that's specific to ubuntu, it's `_www` on Mac OSX). Make another directory in your document root  (public by default), `mkdir public/charts` , and set the owner to `sudo chown www-data public/charts` as well.
+
+Once the data directory is in place, run `php app/create.php` from your repository root. It will create a file in the data dir—make sure the owner is `sudo chown www-data weather-records.rrd`. This should probably be done from the create script, but... 
 
 ---------
 

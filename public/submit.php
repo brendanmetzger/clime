@@ -1,7 +1,7 @@
 <?php define('CONFIG', parse_ini_file('../app/config.ini', true));
 
 // ex: submit.php?ws=10.0&wd=10&ws2=7.0&wd2=270&gs=25.0&gd=180&gs10=12.0&gd10=270&h=51.0&t=76.8&p=101269.3&r=1.00&dr=5.0&b=4.3&l=2.4
-
+//     submit.php?ws=47&wd=9 &ws2=9  &wd2=9  &gs=31  &gd=9  &gs10=16  &gd10=9  &h=59  &t=73  &p=28      &r=2   &dr=6  &b=6  &l=90
 if (levenshtein($_SERVER["SERVER_ADDR"], $_SERVER["REMOTE_ADDR"]) > 3) exit(); // allow local requests
 
 require_once '../app/graph.php';
@@ -63,8 +63,8 @@ try {
 
   $rrDB->update($fields, $_SERVER['REQUEST_TIME']);
   
-  $week = date('yW'); 
-  $fp  = fopen("charts/{$week}.txt", 'a');
+  $date = date('Y-m-d'); 
+  $fp  = fopen("charts/{$date}.txt", 'a');
   $data['timestamp'] = (date('G') * 60) + date('i');
   fputcsv($fp, $data);
 

@@ -74,7 +74,7 @@
  * Includes
  */
 
-#include <EEPROM.h>;
+#include <EEPROM.h>
 #include <Wire.h>
 #include "MPL3115A2.h" //Pressure sensor
 #include "HTU21D.h" //Humidity sensor
@@ -1373,4 +1373,3 @@ void softwareReset() {
     }
   }
 #endif
-

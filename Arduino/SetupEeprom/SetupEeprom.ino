@@ -1,8 +1,8 @@
 /*  EDIT THE FOLLOWING THREE LINES  */
 
-#define DEST_SERVER "[your remote server URL - see instructions]"
-#define SS_ID "[your wifi access point's SSID]" 
-#define WPA_PASSWD "[your wifi access point's WPA password]"
+#define DEST_SERVER "192.168.7.124:80/submit.php"
+#define SS_ID "Wendela" 
+#define WPA_PASSWD "henry2818"
 
 /*  DO NOT EDIT ANYTHING BELOW THIS LINE */
 
@@ -64,5 +64,3 @@ void sWriteEeprom( char * sBuffer, int iLocation) {
     i++;
   }
 }
-
-

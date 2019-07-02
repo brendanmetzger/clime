@@ -3,21 +3,21 @@
 // this is just to simulate what pinging the server would look like over an hour
 function getInput() {
   return [
-    'ws'   => rand(5, 50),
-    'wd'   => round(date('i') / 60 * 15),
-    'ws2'  => rand(5, 10),
-    'wd2'  => round(date('i') / 60 * 15),
-    'gs'   => rand(30, 40),
-    'gd'   => round(date('i') / 60 * 15),
-    'gs10' => rand(10, 50),
-    'gd10' => round(date('i') / 60 * 15),
-    'h'    => rand(50, 80),
-    't'    => rand(20, 100),
-    'p'    => rand(20, 30),
-    'r'    => rand(1, 3),
-    'dr'   => rand(2, 6),
-    'b'    => rand(2, 10),
-    'l'    => rand(40, 90),
+    'ws'   => (float)rand(5, 50),
+    'wd'   => (float)rand(0,16),
+    'ws2'  => (float)rand(5, 10),
+    'wd2'  => (float)round(date('i') / 60 * 15),
+    'gs'   => (float)rand(30, 40),
+    'gd'   => (float)round(date('i') / 60 * 15),
+    'gs10' => (float)rand(10, 50),
+    'gd10' => (float)round(date('i') / 60 * 15),
+    'h'    => (float)rand(50, 80),
+    't'    => (float)rand(20, 100),
+    'p'    => (float)rand(20, 30),
+    'r'    => (float)rand(2, 3),
+    'dr'   => (float)rand(2, 6),
+    'b'    => (float)rand(2, 10),
+    'l'    => (float)rand(40, 90),
   ];
 }
 
