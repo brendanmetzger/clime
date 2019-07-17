@@ -7,13 +7,15 @@ function rpn($expression, $stack = [], $op = []) {
   $op['^'] = function($a, $b) { return $a ** $b; };
   $op['-'] = function($a, $b) { return $a  - $b; };
   $op['/'] = function($a, $b) { return $a  / $b; };
+  $op['%'] = function($a, $b) { return $a  % $b; };
   
-  foreach (preg_split("/[^-+*\/^.0-9]+/", trim($expression)) as $token) {
+  foreach (preg_split("/[^%-+*\/^.0-9]+/", trim($expression)) as $token) {
     $stack[] = is_numeric($token) ? $token : $op[$token](...array_slice($stack, -2));
   }
   
   return end($stack);
 }
+
 
 function createGraph($filename, $key, $start, $trend, $label, $title, $autoscale, $lower = 0, $upper = 0) {
   $graphObj = new RRDGraph("charts/{$filename}.png");
